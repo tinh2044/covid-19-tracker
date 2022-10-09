@@ -66,7 +66,7 @@ const App = () => {
     return (
         <Container style={{ marginTop: 20 }}>
             <Typography variant="h2" component="h2">
-                Data of COVID-19
+                COVID-19 TRACKER
             </Typography>
             <Typography>{moment().format('LLL')}</Typography>
             <CountrySelector handleOnChange={handleOnChange} countries={countries} value={selectedCountryId} />

@@ -45,7 +45,7 @@ const HighMaps = ({ mapData, colorMap, titleTooltip }) => {
         if (mapData && Object.keys(mapData).length) {
             const fakeData = mapData.features.map((feature, index) => ({
                 key: feature.properties['hc-key'],
-                value: index,
+                value: Math.floor(Math.random() * 66000) + 20000,
             }));
 
             setOptions(() => ({
