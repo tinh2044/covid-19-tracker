@@ -14,7 +14,6 @@ const App = () => {
     const [countries, setCountries] = React.useState([]);
     const [selectedCountryId, setSelectedCountryId] = React.useState('');
     const [report, setReport] = React.useState([]);
-
     useEffect(() => {
         getCountries().then((res) => {
             const { data } = res;
