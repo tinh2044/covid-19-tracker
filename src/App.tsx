@@ -1,42 +1,45 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useCallback, useState, useLayoutEffect } from 'react';
 import { sortBy } from 'lodash';
+import moment from 'moment';
+import '@fontsource/roboto';
+import { Container, Typography } from '@material-ui/core';
+import 'moment/locale/vi';
+
 import CountrySelector from './components/CountrySelector';
 import { getCountries, getReportByCountry } from './components/apis';
 import Summary from './components/Summary';
 import Highlight from './components/Highlight';
-import { Container, Typography } from '@material-ui/core';
-import '@fontsource/roboto';
-import moment from 'moment';
-import 'moment/locale/vi';
+import { CountriesType, ReportCovidType } from './components/model';
 
 moment.locale('en');
+
 const App = () => {
-    const [countries, setCountries] = React.useState([]);
-    const [selectedCountryId, setSelectedCountryId] = React.useState('');
-    const [report, setReport] = React.useState([]);
-    useEffect(() => {
-        getCountries().then((res) => {
-            const { data } = res;
-            const countries = sortBy(data, 'Country');
-            setCountries(countries);
-            setSelectedCountryId('vn');
-        });
-    }, []);
+    const [countries, setCountries] = useState<CountriesType[]>([]);
+    const [selectedCountryId, setSelectedCountryId] = useState<string>('');
+    const [report, setReport] = useState<ReportCovidType[]>([]);
 
-    const handleOnChange = React.useCallback((e) => {
-        setSelectedCountryId(e.target.value);
-    }, []);
+    const handleOnChange = useCallback(
+        (e: React.ChangeEvent<HTMLSelectElement>) => {
+            setSelectedCountryId(e.target.value);
+        },
+        [setSelectedCountryId],
+    );
 
     useEffect(() => {
+        console.log('hello');
         if (selectedCountryId) {
-            const selectedCountry = countries.find((country) => country.ISO2 === selectedCountryId.toUpperCase());
-            getReportByCountry(selectedCountry.Slug).then((res) => {
-                // remove last item = current date
-                res.data.pop();
-                setReport(res.data);
-            });
+            const selectedCountry: CountriesType | undefined = countries.find(
+                (country) => country.ISO2 === selectedCountryId.toUpperCase(),
+            );
+            if (selectedCountry) {
+                getReportByCountry(selectedCountry.Slug).then(({ data }) => {
+                    data.pop();
+                    console.log(selectedCountry);
+                    setReport(data);
+                });
+            }
         }
-    }, [selectedCountryId, countries]);
+    }, [selectedCountryId]);
 
     const summary = useMemo(() => {
         if (report && report.length) {
@@ -61,7 +64,15 @@ const App = () => {
         }
         return [];
     }, [report]);
-
+    useLayoutEffect(() => {
+        getCountries().then((res) => {
+            const { data } = res;
+            console.log(res);
+            const countries = sortBy(data, 'Country');
+            setCountries(countries);
+            setSelectedCountryId('vn');
+        });
+    }, []);
     return (
         <Container style={{ marginTop: 20 }}>
             <Typography variant="h2" component="h2">
@@ -75,4 +86,4 @@ const App = () => {
     );
 };
 
-export default App;
+export default React.memo(App);

@@ -2,8 +2,14 @@ import React from 'react';
 import { CardContent, Typography, Card, makeStyles } from '@material-ui/core';
 import CountUp from 'react-countup';
 
+interface Props {
+    title: string;
+    count: number;
+    type: string;
+}
+
 const useStyles = makeStyles({
-    wrapper: (props) => {
+    wrapper: (props: { type: string }) => {
         if (props.type === 'confirmed') return { borderLeft: '5px solid #c9302c' };
         if (props.type === 'recovered') return { borderLeft: '5px solid #28a745' };
         else return { borderLeft: '5px solid gray' };
@@ -12,7 +18,7 @@ const useStyles = makeStyles({
     count: { fontWeight: 'bold', fontSize: 18 },
 });
 
-export default function HighlightCard({ title, count, type }) {
+function HighlightCard({ title, count, type }: Props) {
     const classes = useStyles({ type });
     return (
         <Card className={classes.wrapper}>
@@ -27,3 +33,5 @@ export default function HighlightCard({ title, count, type }) {
         </Card>
     );
 }
+
+export default HighlightCard;

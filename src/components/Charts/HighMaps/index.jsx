@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import Highcharts from 'highcharts';
+import Highcharts, { Chart } from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import highchartsMap from 'highcharts/modules/map';
 import { cloneDeep } from 'lodash';
+
 
 // Load Highcharts modules
 highchartsMap(Highcharts);

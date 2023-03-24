@@ -4,9 +4,10 @@ import HighchartsReact from 'highcharts-react-official';
 import moment from 'moment';
 import { Button, ButtonGroup } from '@material-ui/core';
 import { red, green, grey } from '@material-ui/core/colors';
+import { infoChartType } from '../../Summary';
 
-const generateOptions = (data, type, color, name, titleTooltip) => {
-    const categories = data.map((item) => moment(item.Date).format('DD/MM/YYYY'));
+const generateOptions = (data: number[], color: string, name: string, titleTooltip: string, listDate: string[]) => {
+    const categories = listDate.map((item) => moment(item).format('DD/MM/YYYY'));
 
     return {
         chart: {
@@ -53,14 +54,22 @@ const generateOptions = (data, type, color, name, titleTooltip) => {
     };
 };
 
-export default function LineChart({ data, type, setType, nameChart, titleTooltip }) {
+interface Props {
+    data: number[];
+    type: string;
+    setType: React.Dispatch<React.SetStateAction<infoChartType>>;
+    nameChart: string;
+    titleTooltip: string;
+    listDate: string[];
+}
+
+export default function LineChart({ data, type, setType, nameChart, titleTooltip, listDate }: Props) {
     const [options, setOptions] = useState({});
     const [reportType, setReportType] = useState('all');
-
     const typeColor = type === 'confirmed' ? red[900] : type === 'recovered' ? green[500] : grey[900];
 
     useEffect(() => {
-        let customData = [];
+        let customData: number[];
         switch (reportType) {
             case 'all':
                 customData = data;
@@ -77,7 +86,7 @@ export default function LineChart({ data, type, setType, nameChart, titleTooltip
                 break;
         }
 
-        setOptions(generateOptions(customData, type, typeColor, nameChart, titleTooltip));
+        setOptions(generateOptions(customData, typeColor, nameChart, titleTooltip, listDate));
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [data, reportType, type, typeColor]);
 
@@ -99,7 +108,14 @@ export default function LineChart({ data, type, setType, nameChart, titleTooltip
                     }}
                 >
                     <Button
-                        onClick={() => setType('confirmed')}
+                        onClick={() =>
+                            setType((prev) => {
+                                return {
+                                    ...prev,
+                                    type: 'confirmed',
+                                };
+                            })
+                        }
                         style={
                             type === 'confirmed'
                                 ? {
@@ -113,7 +129,14 @@ export default function LineChart({ data, type, setType, nameChart, titleTooltip
                         Tnfections
                     </Button>
                     <Button
-                        onClick={() => setType('recovered')}
+                        onClick={() =>
+                            setType((prev) => {
+                                return {
+                                    ...prev,
+                                    type: 'recovered',
+                                };
+                            })
+                        }
                         style={
                             type === 'recovered'
                                 ? {
@@ -127,7 +150,14 @@ export default function LineChart({ data, type, setType, nameChart, titleTooltip
                         Recovered
                     </Button>
                     <Button
-                        onClick={() => setType('deaths')}
+                        onClick={() =>
+                            setType((prev) => {
+                                return {
+                                    ...prev,
+                                    type: 'deaths',
+                                };
+                            })
+                        }
                         style={
                             type === 'deaths'
                                 ? {
